@@ -1,0 +1,26 @@
+PATH
+  remote: .
+  specs:
+    gtk-scarpe (0.1.0)
+      lacci (= 0.3.0)
+      scarpe-components (= 0.3.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    lacci (0.3.0)
+      scarpe-components
+    minitest (5.20.0)
+    rake (13.1.0)
+    scarpe-components (0.3.0)
+
+PLATFORMS
+  x86_64-darwin-22
+
+DEPENDENCIES
+  gtk-scarpe!
+  minitest (~> 5.0)
+  rake (~> 13.0)
+
+BUNDLED WITH
+   2.4.14
