@@ -31,8 +31,15 @@ module Scarpe::GTK
     # The display-drawable parent (or nil if no parent)
     attr_reader :parent
 
-    def initialize(properties)
-      log_init("GTK::Drawable")
+    # The GTK+ object (note: do we need multiple, for adding children and adding-as-child?)
+    attr_reader :gtk_obj
+
+    def initialize(properties, parent:)
+      log_init("GTK::#{self.class.name.split("::"[-1])}") unless @log
+
+      # This shouldn't change after creation
+      parent&.add_child(self)
+      @parent = parent
 
       @shoes_style_names = properties.keys.map(&:to_s) - ["shoes_linkable_id"]
 
@@ -50,14 +57,6 @@ module Scarpe::GTK
 
       # Must call this before we can bind events
       super(linkable_id: @shoes_linkable_id)
-
-      # Shoes doesn't normally change parents after the drawable is initially created.
-      bind_shoes_event(event_name: "parent", target: shoes_linkable_id) do |new_parent_id|
-        display_parent = DisplayService.instance.query_display_drawable_for(new_parent_id)
-        if @parent != display_parent
-          set_parent(display_parent)
-        end
-      end
 
       # When Shoes drawables change properties, we get a change notification here
       bind_shoes_event(event_name: "prop_change", target: shoes_linkable_id) do |prop_changes|
@@ -80,6 +79,9 @@ module Scarpe::GTK
       p
     end
 
+    MARGIN_KEYS = ["margin", "margin_left", "margin_top", "margin_bottom", "margin_right"]
+    POSITION_KEYS = ["top", "left", "width", "height"]
+
     # Properties_changed will be called automatically when properties change.
     # The drawable should delete any changes from the Hash that it knows how
     # to incrementally handle, and pass the rest to super. If any changes
@@ -88,16 +90,28 @@ module Scarpe::GTK
     #
     # @param changes [Hash] a Hash of new values for properties that have changed
     def properties_changed(changes)
+      redraw = false
+
+      # Recalculate margins
+      if MARGIN_KEYS.any? { |k| changes.key?(k) }
+        MARGIN_KEYS.each { |k| changes.delete k }
+        @requested_margin = nil
+        redraw = true
+      end
+
+      if POSITION_KEYS.any? { |k| changes.key?(k) }
+        # How do we do the recalculate here? It's going to affect
+        # sibling nodes too, not just ourselves. e.g. if we get wider,
+        # it pushes everything to the right of us in the Flow.
+        redraw = true
+      end
+
+      if redraw
+        raise "How do we refresh this widget?"
+      end
+
       # For each subclass need to handle the known properties and then call super
-
       raise("Somebody didn't handle a property change!") unless changes.empty?
-    end
-
-    # Give this drawable a new parent, including managing the appropriate child lists for parent drawables.
-    def set_parent(new_parent)
-      @parent&.remove_child(self)
-      new_parent&.add_child(self)
-      @parent = new_parent
     end
 
     # A shorter inspect text for prettier irb output
@@ -111,6 +125,44 @@ module Scarpe::GTK
       @parent&.remove_child(self)
       unsub_all_shoes_events
       # TODO: remove properly
+    end
+
+    # This returns the requested margin for left/top/right/bottom, but it could be
+    # a float (percentage) or negative number that requires further width-dependent
+    # calculation.
+    def requested_margin
+      return @requested_margin if @requested_margin
+
+      # Get margin default
+      if @margin && @margin.is_a?(Integer)
+        md = margin
+      else
+        md = 0
+      end
+
+      @requested_margin = [@margin_left || md, @margin_top || md, @margin_right || md, @margin_bottom || md]
+      @requested_margin.map! do |item|
+        if item.is_a?(String)
+          if item[-1] != "%"
+            raise "Illegal margin String value: #{item.inspect}!"
+          end
+          item.to_f * 0.01
+        elsif item.is_a?(Integer)
+          item
+        else
+          raise "Illegal margin #{item.class} value: #{item.inspect}!"
+        end
+      end
+      @requested_margin
+    end
+
+    # Calculate the position based on the parent drawable(s) and the current
+    # properties.
+    def calc_pos_and_size(cursor)
+      _min_size, nat_size = @gtk_obj.preferred_size
+      w, h = nat_size.width, nat_size.height
+
+      ml, mt, mr, mb = requested_margin
     end
   end
 end

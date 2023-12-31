@@ -54,6 +54,9 @@ module Scarpe::GTK
         return display_app
       end
 
+      # Nil parent is fine for DocumentRoot and any TextDrawable, so we have to specify nil_ok.
+      display_parent = Scarpe::GTK::DisplayService.instance.query_display_drawable_for(parent_id, nil_ok: true)
+
       # Create a corresponding display drawable
       if is_widget
         display_class = Scarpe::GTK::Flow
@@ -63,7 +66,7 @@ module Scarpe::GTK
           raise Scarpe::BadDisplayClassType, "Wrong display class type #{display_class.inspect} for class name #{drawable_class_name.inspect}!"
         end
       end
-      display_drawable = display_class.new(properties)
+      display_drawable = display_class.new(properties, parent: display_parent)
       set_drawable_pairing(drawable_id, display_drawable)
 
       if drawable_class_name == "DocumentRoot"
@@ -71,10 +74,6 @@ module Scarpe::GTK
         # but we'll want a reference to it when we create App.
         @doc_root = display_drawable
       end
-
-      # Nil parent is fine for DocumentRoot and any TextDrawable, so we have to specify nil_ok.
-      display_parent = Scarpe::GTK::DisplayService.instance.query_display_drawable_for(parent_id, nil_ok: true)
-      display_drawable.set_parent(display_parent) if display_parent
 
       display_drawable
     end

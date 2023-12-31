@@ -8,6 +8,7 @@ require "shoes"
 require "lacci/scarpe_core"
 
 require "gtk4"
+require "gdk4"
 
 require "scarpe/components/modular_logger"
 # Set up hierarchical logging using the SCARPE_LOG_CONFIG var for configuration
@@ -41,6 +42,8 @@ require_relative "gtk-scarpe/drawable"
 require_relative "gtk-scarpe/slot"
 require_relative "gtk-scarpe/app"
 
+require_relative "gtk-scarpe/button"
+
 #require_relative "gtk-scarpe/radio"
 #require_relative "gtk-scarpe/art_drawables"
 #require_relative "gtk-scarpe/app"
@@ -50,7 +53,6 @@ require_relative "gtk-scarpe/app"
 #require_relative "gtk-scarpe/flow"
 #require_relative "gtk-scarpe/document_root"
 #require_relative "gtk-scarpe/subscription_item"
-#require_relative "gtk-scarpe/button"
 #require_relative "gtk-scarpe/progress"
 #require_relative "gtk-scarpe/image"
 #require_relative "gtk-scarpe/edit_box"

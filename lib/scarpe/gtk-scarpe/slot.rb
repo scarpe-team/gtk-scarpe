@@ -6,14 +6,20 @@ module Scarpe::GTK
     # The children of this drawable, if it is a slot or can otherwise have children
     attr_reader :children
 
-    protected
+    def initialize(properties, parent:)
+      super
+
+      # Children can set @gtk_obj == true if they don't want the Slot to create one
+      unless @gtk_obj
+        @gtk_obj = Gtk::Fixed.new
+      end
+    end
 
     # Do not call directly, use set_parent
     def remove_child(child)
       @children ||= []
       unless @children.include?(child)
-        @log.error("remove_child: no such child(#{child.inspect}) for"\
-          " parent(#{parent.inspect})!")
+        @log.error("remove_child: no such child(#{child.inspect}) for parent(#{parent.inspect})!")
       end
       @children.delete(child)
     end
@@ -27,8 +33,14 @@ module Scarpe::GTK
       #needs_update!
     end
 
-    public
-
+    def put_to_canvas(canvas, context)
+      ctx = context.dup
+      ctx[:left] += @left if @left
+      ctx[:top] += @top if @top
+      @children.each do |child|
+        child.put_to_canvas canvas, ctx
+      end
+    end
   end
 
   class Flow < Slot
@@ -37,6 +49,7 @@ module Scarpe::GTK
   class Stack < Slot
   end
 
+  # left: 0, top: 0
   class DocumentRoot < Slot
   end
 end
