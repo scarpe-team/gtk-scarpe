@@ -156,7 +156,7 @@ module Scarpe::GTK
       @requested_margin
     end
 
-    # Calculate the position based on the parent drawable(s) and the current
+    # Calculate the position relative to the parent drawable(s) based on the current
     # properties.
     def calc_pos_and_size(cursor)
       _min_size, nat_size = @gtk_obj.preferred_size

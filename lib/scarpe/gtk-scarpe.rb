@@ -10,6 +10,7 @@ require "lacci/scarpe_core"
 require "gtk4"
 require "gdk4"
 
+require "scarpe/components/errors"
 require "scarpe/components/modular_logger"
 # Set up hierarchical logging using the SCARPE_LOG_CONFIG var for configuration
 log_config = if ENV["SCARPE_LOG_CONFIG"]
@@ -30,8 +31,8 @@ Shoes::FONTS.push("Helvetica", "Arial")
 #Shoes::FEATURES.push(:gtk)
 #Shoes::EXTENSIONS.push(:scarpe)
 
-#require_relative "shoes_spec"
-#Shoes::Spec.instance = Scarpe::GTK::Test
+require_relative "gtk-scarpe/shoes_spec"
+Shoes::Spec.instance = Scarpe::GTK::Test
 
 require_relative "gtk-scarpe/display_service"
 Shoes::DisplayService.set_display_service_class(Scarpe::GTK::DisplayService)

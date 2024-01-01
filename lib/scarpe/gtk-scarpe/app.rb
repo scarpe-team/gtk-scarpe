@@ -7,10 +7,20 @@ module Scarpe::GTK
 
     attr_reader :canvas
 
+    class << self
+      attr_accessor :instance
+    end
+
     def initialize(properties)
+      if Scarpe::GTK::App.instance
+        raise Scarpe::MultipleAppObjectsError, "Only one Scarpe::GTK::App is allowed at once!"
+      end
+      Scarpe::GTK::App.instance = self
+
       super(properties, parent: nil)
 
       @canvas = Gtk::Fixed.new
+      @post_init_methods = []
 
       bind_shoes_event(event_name: "init") { init }
       bind_shoes_event(event_name: "run") { run }
@@ -31,11 +41,14 @@ module Scarpe::GTK
     def init
     end
 
+    def on_post_init(&block)
+      @post_init_methods << block
+    end
+
     def run
       @gtk_app = Gtk::Application.new("org.gtk.example", :flags_none)
 
       @gtk_app.signal_connect "startup" do |app|
-        STDERR.puts "STARTUP"
         # Load CSS
         provider = Gtk::CssProvider.new
         provider.load data: "GtkWindow { background-color: white; }" # CSS data here
@@ -43,7 +56,6 @@ module Scarpe::GTK
       end
 
       @gtk_app.signal_connect "activate" do |app|
-        STDERR.puts "ACTIVATE"
         @main_window = Gtk::ApplicationWindow.new(app)
         #@main_window.icon = Gdk::Pixbuf.new File.join(DIR, '../static/gshoes-icon.png')
         @main_window.title = @title
@@ -59,12 +71,15 @@ module Scarpe::GTK
         @main_window.child = @canvas
         put_to_canvas
         @main_window.show
+
+        @post_init_methods.each(&:call)
       end
 
       @gtk_app.run
     end
 
     def destroy
+      @gtk_app.quit
     end
 
     def put_to_canvas

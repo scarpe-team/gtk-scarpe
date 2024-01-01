@@ -1,4 +1,15 @@
 PATH
+  remote: ../scarpe/lacci
+  specs:
+    lacci (0.3.0)
+      scarpe-components
+
+PATH
+  remote: ../scarpe/scarpe-components
+  specs:
+    scarpe-components (0.3.0)
+
+PATH
   remote: .
   specs:
     gtk-scarpe (0.1.0)
@@ -10,8 +21,10 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    ansi (1.5.0)
     atk (4.2.0)
       glib2 (= 4.2.0)
+    builder (3.2.4)
     cairo (1.17.13)
       native-package-installer (>= 1.0.3)
       pkg-config (>= 1.2.2)
@@ -37,14 +50,17 @@ GEM
     gtk4 (4.2.0)
       atk (= 4.2.0)
       gdk4 (= 4.2.0)
-    lacci (0.3.0)
-      scarpe-components
     little-plugger (1.1.4)
     logging (2.3.1)
       little-plugger (~> 1.1)
       multi_json (~> 1.14)
     matrix (0.4.2)
     minitest (5.20.0)
+    minitest-reporters (1.6.1)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     multi_json (1.15.0)
     native-package-installer (1.1.9)
     pango (4.2.0)
@@ -54,15 +70,18 @@ GEM
     rake (13.1.0)
     red-colors (0.3.0)
       matrix
-    scarpe-components (0.3.0)
+    ruby-progressbar (1.13.0)
 
 PLATFORMS
   x86_64-darwin-22
 
 DEPENDENCIES
   gtk-scarpe!
+  lacci!
   minitest (~> 5.0)
+  minitest-reporters
   rake (~> 13.0)
+  scarpe-components!
 
 BUNDLED WITH
    2.4.14

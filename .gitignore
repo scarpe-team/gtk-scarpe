@@ -8,3 +8,5 @@
 /tmp/
 gtk-scarpe-*.gem
 **/.DS_Store
+test/sspec.json
+logger/test_failure_*.log

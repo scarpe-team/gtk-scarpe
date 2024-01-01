@@ -7,6 +7,8 @@ module Scarpe::GTK
     attr_reader :children
 
     def initialize(properties, parent:)
+      @children = []
+
       super
 
       # Children can set @gtk_obj == true if they don't want the Slot to create one
@@ -17,7 +19,6 @@ module Scarpe::GTK
 
     # Do not call directly, use set_parent
     def remove_child(child)
-      @children ||= []
       unless @children.include?(child)
         @log.error("remove_child: no such child(#{child.inspect}) for parent(#{parent.inspect})!")
       end
@@ -26,7 +27,6 @@ module Scarpe::GTK
 
     # Do not call directly, use set_parent
     def add_child(child)
-      @children ||= []
       @children << child
 
       # If we add a child, we should redraw ourselves

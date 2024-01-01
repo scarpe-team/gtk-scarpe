@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module Scarpe
+  class MultipleAppObjectsError < Scarpe::Error; end
+
+  class MultipleDrawablesFoundError < Scarpe::Error; end
+
+  class NoDrawablesFoundError < Scarpe::Error; end
+
   class UnknownShoesEventAPIError < Scarpe::Error; end
 
   class UnknownBuiltinCommandError < Scarpe::Error; end
