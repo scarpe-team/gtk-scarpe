@@ -42,19 +42,25 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 Everyone interacting in the Gtk::Scarpe project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/scarpe-team/gtk-scarpe/blob/main/CODE_OF_CONDUCT.md).
 
-## References
+### Shoes References
 
-Lots of these have great reference code for Shoes, Scarpe, GTK+ or similar.
-
-Also, when Googling for GTK+ references, keep in mind that GTK+ version 4 ("gtk4") is significantly different from version 2 or version 3. Lots of changes, deprecations and so on. So older code using gtk2 and gtk3 will need updating.
+Lots of these have great reference code for Shoes and Scarpe, and general Shoes-related information.
 
 * [Nobody Knows Shoes](https://github.com/whymirror/why-archive/blob/master/shoes/nobody-knows-shoes.pdf) - the original "learn Shoes" book by \_why
 * [The Shoes Manual](https://github.com/scarpe-team/scarpe/blob/main/docs/static/manual.md)
 * [Scarpe API Docs](https://scarpe-team.github.io/scarpe/)
 * [Scarpe Source Code](https://github.com/scarpe-team/scarpe/)
 * [Scarpe-Wasm](https://github.com/scarpe-team/scarpe-wasm) - another "free-standing" display service for Scarpe, not packaged with Scarpe itself
+* [AndyObtiva's Glimmer DSL for GTK+ 3.0](https://github.com/AndyObtiva/glimmer-dsl-gtk) - a good reference for another Ruby GTK+-based binding
+
+### GTK+ References
+
+Lots of these have great reference code for Shoes, Scarpe, GTK+ or similar.
+
+Also, when Googling for GTK+ references, keep in mind that GTK+ version 4 ("gtk4") is significantly different from version 2 or version 3. Lots of changes, deprecations and so on. So older code using gtk2 and gtk3 will need updating.
+
 * [Ruby-Gnome project](https://github.com/ruby-gnome/ruby-gnome) - Ruby bindings for GNOME libs like GTK+
 * [Ruby GTK docs](https://www.rubydoc.info/gems/gtk4/4.2.0)
 * [GTK+ 4.0 docs](https://docs.gtk.org/gtk4/getting_started.html)
-* [Green Shoes](https://github.com/ashbb/green_shoes) - a gtk2 implementation of Shoes Classic, from before Scarpe existed
-* [AndyObtiva's Glimmer DSL for GTK+ 3.0](https://github.com/AndyObtiva/glimmer-dsl-gtk) - a good reference for another Ruby GTK+-based binding
+* [The GTK+ 4 Draw Model](https://docs.gtk.org/gtk4/drawing-model.html) - this is a little different from earlier versions of GTK+
+* [Green Shoes](https://github.com/ashbb/green_shoes) - a gtk2 implementation of Shoes Classic, from long before Scarpe existed
