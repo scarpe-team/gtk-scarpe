@@ -21,6 +21,7 @@ module Scarpe::GTK
 
       @canvas = Gtk::Fixed.new
       @post_init_methods = []
+      @alerts = []
 
       bind_shoes_event(event_name: "init") { init }
       bind_shoes_event(event_name: "run") { run }
@@ -31,7 +32,14 @@ module Scarpe::GTK
         when "font"
           raise "Implement me!"
         when "alert"
-          raise "Implement me!"
+          # TODO: we should add a parent window where possible.
+          dialog = Gtk::MessageDialog.new message: args[0], type: :error, parent: nil, flags: nil, buttons: :ok
+          dialog.signal_connect(:response) do
+            dialog.destroy
+            @alerts.delete(dialog)
+          end
+          dialog.show
+          @alerts << dialog
         else
           raise Scarpe::UnknownBuiltinCommandError, "Unexpected builtin command: #{cmd_name.inspect}!"
         end
