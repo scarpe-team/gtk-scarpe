@@ -103,16 +103,15 @@ module Scarpe::GTK
   end
 end
 
-# Do any of these need variant styles or tags? Ins is a Lacci-styled span in Webview.
 [
   [:code, :tt],
-  [:del],
+  [:del, :s],
   [:em, :i],
   [:strong, :b],
-  [:span],
-  [:sub],
-  [:sup],
-  [:ins]
+  [:span, :span],
+  [:sub, :sub],
+  [:sup, :sup],
+  [:ins, :u]
 ].each do |shoes_tag, pango_tag|
   Scarpe::GTK::TextDrawable.tagged_text_drawable(shoes_tag, pango_tag)
 end
