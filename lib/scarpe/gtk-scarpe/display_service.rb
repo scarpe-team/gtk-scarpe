@@ -62,7 +62,7 @@ module Scarpe::GTK
         display_class = Scarpe::GTK::Flow
       else
         display_class = Scarpe::GTK::Drawable.display_class_for(drawable_class_name)
-        unless display_class < Scarpe::GTK::Drawable
+        unless display_class < Shoes::Linkable
           raise Scarpe::BadDisplayClassType, "Wrong display class type #{display_class.inspect} for class name #{drawable_class_name.inspect}!"
         end
       end

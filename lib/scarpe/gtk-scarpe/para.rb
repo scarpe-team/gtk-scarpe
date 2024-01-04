@@ -16,7 +16,7 @@ module Scarpe::GTK
           text_item.gsub("\n", "<br>")
         else
           # Should be a TextDrawable
-          text_item.to_markup
+          DisplayService.instance.query_display_drawable_for(text_item).to_markup
         end
       end.join
     end

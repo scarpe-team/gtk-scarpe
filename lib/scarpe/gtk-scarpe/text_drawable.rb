@@ -8,8 +8,10 @@ module Scarpe::GTK
   # need to be part of the Drawable tree, with corresponding GTK+ objects.
   # TextDrawables are just a source of markup and styling data for GTK+
   # or Pango.
-  class TextDrawable
+  class TextDrawable < Shoes::Linkable
     def initialize(properties, parent:)
+      super()
+
       @props = properties
       @parent = parent
       @shoes_linkable_id = properties.delete("shoes_linkable_id")
@@ -18,11 +20,11 @@ module Scarpe::GTK
       end
 
       # When Shoes drawables change properties, we get a change notification here
-      bind_shoes_event(event_name: "prop_change", target: shoes_linkable_id) do |prop_changes|
+      bind_shoes_event(event_name: "prop_change", target: @shoes_linkable_id) do |prop_changes|
         raise "Implement me!"
       end
 
-      bind_shoes_event(event_name: "destroy", target: shoes_linkable_id) do
+      bind_shoes_event(event_name: "destroy", target: @shoes_linkable_id) do
         raise "Implement me!"
       end
     end
@@ -64,12 +66,12 @@ module Scarpe::GTK
 
     # How are we going to do styling?
     def vis_item_to_markup(vis_item)
-      raise "Set tag!" unless vis_item[:tag]
+      raise "Set tag! #{vis_item.inspect}" unless vis_item[:tag]
 
       "<#{vis_item[:tag]}>" +
       vis_item[:items].map do |sub_item|
         sub_item.is_a?(String) ? sub_item : vis_item_to_markup(sub_item)
-      end
+      end.join +
       "</#{vis_item[:tag]}>"
     end
 
@@ -87,7 +89,7 @@ module Scarpe::GTK
             attr_accessor :gtk_tag
           end
 
-          def visual_items
+          def visual_item
             h = super
             h[:tag] = self.class.gtk_tag
             h
@@ -102,8 +104,17 @@ module Scarpe::GTK
 end
 
 # Do any of these need variant styles or tags? Ins is a Lacci-styled span in Webview.
-[:code, :del, :em, :strong, :span, :sub, :sup, :ins].each do |tag|
-  Scarpe::GTK::TextDrawable.tagged_text_drawable(tag)
+[
+  [:code, :tt],
+  [:del],
+  [:em, :i],
+  [:strong, :b],
+  [:span],
+  [:sub],
+  [:sup],
+  [:ins]
+].each do |shoes_tag, pango_tag|
+  Scarpe::GTK::TextDrawable.tagged_text_drawable(shoes_tag, pango_tag)
 end
 
 # How are we doing links?
