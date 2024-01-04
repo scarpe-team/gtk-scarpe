@@ -90,7 +90,7 @@ class Scarpe::GTK::ShoesSpecTest < Minitest::Test
       raise Shoes::Errors::MultipleDrawablesFoundError, "Found more than one #{finder_name} matching #{args.inspect}!" if drawables.size > 1
       raise Shoes::Errors::NoDrawablesFoundError, "Found no #{finder_name} matching #{args.inspect}!" if drawables.empty?
 
-      Scarpe::ShoesSpecProxy.new(drawables[0])
+      Scarpe::GTK::ShoesSpecProxy.new(drawables[0])
     end
   end
 
