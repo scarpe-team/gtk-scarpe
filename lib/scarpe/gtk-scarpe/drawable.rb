@@ -111,7 +111,7 @@ module Scarpe::GTK
       end
 
       # For each subclass need to handle the known properties and then call super
-      raise("Somebody didn't handle a property change!") unless changes.empty?
+      raise("#{self.class} didn't handle a property change! #{changes.inspect}") unless changes.empty?
     end
 
     # A shorter inspect text for prettier irb output

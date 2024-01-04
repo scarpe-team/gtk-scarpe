@@ -21,6 +21,15 @@ module Scarpe::GTK
       end.join
     end
 
+    def properties_changed(changes)
+      items = changes.delete("text_items")
+      if items
+        @gtk_obj.set_markup child_markup
+      end
+
+      super
+    end
+
     def put_to_canvas(canvas, context)
       x = context[:left] + (@left || 0)
       y = context[:top] + (@top || 0)

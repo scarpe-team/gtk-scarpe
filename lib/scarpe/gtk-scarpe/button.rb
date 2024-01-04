@@ -2,6 +2,8 @@
 
 module Scarpe::GTK
   class Button < Drawable # App inherits from Drawable to set up linkable IDs and event methods
+    attr_reader :gtk_obj # Needed for triggering clicks in tests
+
     def initialize(properties, parent:)
       super
 
@@ -13,6 +15,15 @@ module Scarpe::GTK
       end
 
       # TODO: hover
+    end
+
+    def properties_changed(changes)
+      text = changes.delete("text")
+      if text
+        @gtk.obj.text = text
+      end
+
+      super
     end
 
     def put_to_canvas(canvas, context)
