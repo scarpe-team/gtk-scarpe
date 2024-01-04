@@ -29,6 +29,58 @@ module Scarpe::GTK
       end
     end
 
+    def self.color_to_rgb(c)
+      return "#000000FF" if c == ""
+      return c if c.is_a?(String)
+      return nil if c.nil?
+
+      if c.is_a?(Array) && c[0].is_a?(Integer)
+        r, g, b, a = *c
+        if r.is_a?(Float)
+          r = (r * 255.0).to_i
+          g = (g * 255.0).to_i
+          b = (b * 255.0).to_i
+          a = ((a || 1.0) * 255.0).to_i
+        end
+
+        r = r.clamp(0, 255)
+        g = g.clamp(0, 255)
+        b = b.clamp(0, 255)
+        a = a.clamp(0, 255)
+
+        return "#%0.2X%0.2X%0.2X%0.2X" % [r, g, b, a]
+      end
+
+      raise "Implement me! Color conversion: #{c.inspect}"
+    end
+
+    def self.shoes_properties_to_pango_attributes(p)
+      out = {}
+      p.each do |prop, val|
+        next if val.nil?
+        next if prop == "text_items"
+
+        case prop
+        when "stroke"
+          out[:foreground] = color_to_rgb(val)
+        when "fill"
+          out[:background] = color_to_rgb(val)
+        when "align", "font", "strikecolor", "underline", "undercolor", "size"
+          # Not yet handled...
+          # Note: Pango RGB color specs are allowed to have a fourth component for alpha
+        else
+          puts "Need to add Shoes text property handler for #{prop.inspect}!"
+        end
+      end
+
+      out
+    end
+
+    def pango_attributes
+      p_props = self.class.shoes_properties_to_pango_attributes(@props)
+      self.class.default_pango_attributes.merge(p_props)
+    end
+
     # Get an alternating list of Strings and TextDrawables for the text content.
     def items_to_display_children(items)
       return [] if items.nil?
@@ -60,19 +112,18 @@ module Scarpe::GTK
         items: vis_items,
         id: @linkable_id,
         tag: nil, # The parent TextDrawable doesn't know what tag yet
-        props: @props,
+        props: pango_attributes,
       }
     end
 
     # How are we going to do styling?
     def vis_item_to_markup(vis_item)
-      raise "Set tag! #{vis_item.inspect}" unless vis_item[:tag]
-
-      "<#{vis_item[:tag]}>" +
+      props = vis_item[:props].map { |k, v| " #{k}=\"#{v}\""}.join("")
+      "<span#{props}>" +
       vis_item[:items].map do |sub_item|
         sub_item.is_a?(String) ? sub_item : vis_item_to_markup(sub_item)
       end.join +
-      "</#{vis_item[:tag]}>"
+      "</span>"
     end
 
     def to_markup
@@ -80,40 +131,31 @@ module Scarpe::GTK
     end
 
     class << self
-      def tagged_text_drawable(shoes_tag, gtk_tag = nil)
-        gtk_tag ||= shoes_tag
+      attr_accessor :default_pango_attributes
+
+      def tagged_text_drawable(shoes_tag, pango_attributes)
         display_class_name = shoes_tag.capitalize
-        drawable_class = Class.new(Scarpe::GTK::TextDrawable) do
-          # The gtk_tag local var isn't visible here, need to pass it a different way
-          class << self
-            attr_accessor :gtk_tag
-          end
-
-          def visual_item
-            h = super
-            h[:tag] = self.class.gtk_tag
-            h
-          end
-        end
-
+        drawable_class = Class.new(Scarpe::GTK::TextDrawable)
         Scarpe::GTK.const_set(display_class_name, drawable_class)
-        drawable_class.gtk_tag = gtk_tag
+
+        drawable_class.default_pango_attributes = pango_attributes
       end
     end
   end
 end
 
+# Map Shoes tag names to default Pango formatting.
 [
-  [:code, :tt],
-  [:del, :s],
-  [:em, :i],
-  [:strong, :b],
-  [:span, :span],
-  [:sub, :sub],
-  [:sup, :sup],
-  [:ins, :u]
-].each do |shoes_tag, pango_tag|
-  Scarpe::GTK::TextDrawable.tagged_text_drawable(shoes_tag, pango_tag)
+  [:code, { font_family: "Monospace" }],
+  [:del, { strikethrough: true }],
+  [:em, { style: "italic" }],
+  [:strong, { weight: "bold" }],
+  [:span, {}],
+  [:sub, { font_scale: "subscript", baseline_shift: "subscript" }],
+  [:sup, { font_scale: "superscript", baseline_shift: "superscript" }],
+  [:ins, { underline: "single" }]
+].each do |shoes_tag, pango_attrs|
+  Scarpe::GTK::TextDrawable.tagged_text_drawable(shoes_tag, pango_attrs)
 end
 
 # How are we doing links?
