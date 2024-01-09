@@ -96,6 +96,42 @@ module Scarpe::Positioning
     raise "Implement pos_children() in your subclass!"
   end
 
+  def calculate_drawable_layout(ctx)
+    pw = pos_property("width")
+    ph = pos_property("height")
+    pt = pos_property("top")
+    pl = pos_property("left")
+
+    # If there is a requested width, height, top or left, use it.
+    # Layout is complicated, but a requested size makes things much simpler.
+    w = pw && req_to_size(pw, ctx["width"])
+    h = ph && req_to_size(ph, ctx["height"])
+    t = pt && req_to_size(pt || 0, ctx["height"])
+    l = pl && req_to_size(pl || 0, ctx["width"])
+
+    # Failing that, if it's a Drawable with a native height or width, use that
+    if !w || !h
+      min_w, min_h = pos_minimum_size
+      w ||= min_w
+      h ||= min_h
+    end
+
+    out_ctx = {
+      "top" => t || ctx["top"] || 0,
+      "left" => l || ctx["left"] || 0,
+      "width" => w,
+      "height" => h,
+      #"display" => (t || l) ? "out" : "in", # Does this display inline, or is it out-of-line?
+    }
+
+    # Commonly, top and left may not be set here and the parent slot will need to do it.
+    if w && h
+      return(out_ctx)
+    end
+
+    raise "Implement me! Can't figure out what width and/or height should be! W: #{w.inspect} H: #{h.inspect} #{self.inspect}"
+  end
+
   # Calculate the layout of ourselves and our children, if any.
   # The initial app context will have the app's top-level width
   # and height, and each slot will receive its parent's width
@@ -108,12 +144,17 @@ module Scarpe::Positioning
       raise "Must declare what element type to position as! #{self.inspect}"
     end
 
+    if @position_as == "Drawable"
+      return calculate_drawable_layout(ctx)
+    end
+
     pw = pos_property("width")
     ph = pos_property("height")
     pt = pos_property("top")
     pl = pos_property("left")
 
-    # If there is a requested width, height, top or left, use it
+    # If there is a requested width, height, top or left, use it.
+    # Layout is complicated, but a requested size makes things much simpler.
     w = pw && req_to_size(pw, ctx["width"])
     h = ph && req_to_size(ph, ctx["height"])
     t = pt && req_to_size(pt || 0, ctx["height"])

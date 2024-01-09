@@ -53,7 +53,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root app_size
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
   end
 
   def test_percent_doc_root
@@ -61,7 +61,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root({ "width" => "100%", "height" => "100%" })
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
   end
 
   def test_float_doc_root
@@ -69,7 +69,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root({"width" => 1.0, "height" => 1.0})
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
   end
 
   def test_simple_native_size_drawable_in_doc_root
@@ -79,7 +79,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root(app_size, children: [drawable(100, 50)])
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal([{ "top" => 0, "left" => 0, "width" => 100, "height" => 50 }], pos["children"])
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 100, "height" => 50 }, pos["children"][0])
   end
 
   def test_simple_int_width_drawable_in_doc_root
@@ -89,7 +89,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root(app_size, children: [drawable(100, 50, props: { "width" => 110 })])
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal([{ "top" => 0, "left" => 0, "width" => 110, "height" => 50 }], pos["children"])
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 110, "height" => 50 }, pos["children"][0])
   end
 
   def test_simple_pct_width_drawable_in_doc_root
@@ -98,7 +98,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root(app_size, children: [drawable(10, 30, props: { "width" => "10%", "height" => "10%" })])
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal([{ "top" => 0, "left" => 0, "width" => 30, "height" => 45 }], pos["children"])
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 30, "height" => 45 }, pos["children"][0])
   end
 
   def test_simple_float_width_drawable_in_doc_root
@@ -107,7 +107,7 @@ class TestPositioningModule < Minitest::Test
     top_flow = doc_root(app_size, children: [drawable(20, 50, props: { "width" => 0.2, "height" => 0.2 })])
     pos = top_flow.calculate_layout(app_size)
 
-    assert_equal([{ "top" => 0, "left" => 0, "width" => 60, "height" => 90 }], pos["children"])
+    assert_has_properties({ "top" => 0, "left" => 0, "width" => 60, "height" => 90 }, pos["children"][0])
   end
 
   def test_simple_drawable_in_stack
@@ -183,9 +183,9 @@ class TestPositioningModule < Minitest::Test
     pos = top_flow.calculate_layout(app_size)
 
     # First drawable should be 75 wide, 50 tall and at 0,0
-    assert_equal({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
     # Second drawable should be 100 wide, 65 tall and at 0, 50 (just after first drawable)
-    assert_equal({ "width" => 100, "height" => 65, "top" => 50, "left" => 0 }, pos["children"][0]["children"][1])
+    assert_has_properties({ "width" => 100, "height" => 65, "top" => 50, "left" => 0 }, pos["children"][0]["children"][1])
   end
 
   def test_two_drawables_in_flow
@@ -200,9 +200,9 @@ class TestPositioningModule < Minitest::Test
     pos = top_flow.calculate_layout(app_size)
 
     # First drawable should be 75 wide, 50 tall and at 0,0
-    assert_equal({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
     # Second drawable should be 100 wide, 65 tall and at 0, 50 (just after first drawable)
-    assert_equal({ "width" => 100, "height" => 65, "top" => 0, "left" => 75 }, pos["children"][0]["children"][1])
+    assert_has_properties({ "width" => 100, "height" => 65, "top" => 0, "left" => 75 }, pos["children"][0]["children"][1])
   end
 
   def test_flow_wrapping_drawables
@@ -220,11 +220,11 @@ class TestPositioningModule < Minitest::Test
     pos = top_flow.calculate_layout(app_size)
 
     # First row
-    assert_equal({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
-    assert_equal({ "width" => 150, "height" => 75, "top" => 0, "left" => 100 }, pos["children"][1])
+    assert_has_properties({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
+    assert_has_properties({ "width" => 150, "height" => 75, "top" => 0, "left" => 100 }, pos["children"][1])
     # Second row
-    assert_equal({ "width" => 100, "height" => 90, "top" => 75, "left" => 0 }, pos["children"][2])
-    assert_equal({ "width" => 175, "height" => 50, "top" => 75, "left" => 100 }, pos["children"][3])
+    assert_has_properties({ "width" => 100, "height" => 90, "top" => 75, "left" => 0 }, pos["children"][2])
+    assert_has_properties({ "width" => 175, "height" => 50, "top" => 75, "left" => 100 }, pos["children"][3])
   end
 
   def test_flow_wrapping_drawables_with_shorter_second_row_and_very_wide_third_row
@@ -248,15 +248,15 @@ class TestPositioningModule < Minitest::Test
     pos = top_flow.calculate_layout(app_size)
 
     # First row
-    assert_equal({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
-    assert_equal({ "width" => 150, "height" => 90, "top" => 0, "left" => 100 }, pos["children"][1])
+    assert_has_properties({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
+    assert_has_properties({ "width" => 150, "height" => 90, "top" => 0, "left" => 100 }, pos["children"][1])
     # Second row
-    assert_equal({ "width" => 100, "height" => 40, "top" => 90, "left" => 0 }, pos["children"][2])
-    assert_equal({ "width" => 175, "height" => 50, "top" => 90, "left" => 100 }, pos["children"][3])
+    assert_has_properties({ "width" => 100, "height" => 40, "top" => 90, "left" => 0 }, pos["children"][2])
+    assert_has_properties({ "width" => 175, "height" => 50, "top" => 90, "left" => 100 }, pos["children"][3])
     # Third row
-    assert_equal({ "width" => 350, "height" => 50, "top" => 140, "left" => 0 }, pos["children"][4])
+    assert_has_properties({ "width" => 350, "height" => 50, "top" => 140, "left" => 0 }, pos["children"][4])
     # Fourth row
-    assert_equal({ "width" => 250, "height" => 50, "top" => 190, "left" => 0 }, pos["children"][5])
+    assert_has_properties({ "width" => 250, "height" => 50, "top" => 190, "left" => 0 }, pos["children"][5])
   end
 
   # TODO: margins

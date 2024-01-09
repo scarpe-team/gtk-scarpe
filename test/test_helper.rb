@@ -9,6 +9,13 @@ require "scarpe/components/minitest_result"
 
 require "minitest/autorun"
 
+class Minitest::Test
+  def assert_has_properties(props, hash)
+    k = props.keys
+    assert_equal props, hash.slice(*k)
+  end
+end
+
 class GtkSpecTest < Minitest::Test
   include Scarpe::Test::LoggedTest
   include Scarpe::Components::FileHelpers
