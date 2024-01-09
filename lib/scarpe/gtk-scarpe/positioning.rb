@@ -104,6 +104,10 @@ module Scarpe::Positioning
   #
   # @return [Hash<String,Object>] a Hash of calculated values like width, height, top and left
   def calculate_layout(ctx)
+    unless @position_as
+      raise "Must declare what element type to position as! #{self.inspect}"
+    end
+
     pw = pos_property("width")
     ph = pos_property("height")
     pt = pos_property("top")
@@ -122,23 +126,25 @@ module Scarpe::Positioning
       h ||= min_h
     end
 
+    out_ctx = {
+      "top" => t || 0,
+      "left" => l || 0,
+      "width" => w,
+      "height" => h,
+    }
+
     children = nil
     if @position_as == "Flow" || @position_as == "Stack"
       children = pos_children
       if children.size > 1
         raise "Implement nontrivial layout!"
       end
-      children = children.map { |child| child.calculate_layout(ctx) }
+      # out_ctx has the slot's top, left, width and height
+      out_ctx["children"] = children.map { |child| child.calculate_layout(out_ctx) }
     end
 
     if w && h
-      return({
-        "top" => t || 0,
-        "left" => l || 0,
-        "width" => w,
-        "height" => h,
-        "children" => children,
-      }.compact)
+      return(out_ctx)
     end
 
     raise "Implement me! #{self.inspect}"
@@ -153,10 +159,14 @@ module Scarpe::Positioning
     case req
     when nil, Integer
       if req < 0
-        raise "Implement me!"
+        m = context_size + req
+        return (m > 0 ? m : 0)
       end
       return req
     when Float
+      if req < 0
+        raise "Implement me!"
+      end
       return context_size * req
     when String
       if req[-1] == "%"
