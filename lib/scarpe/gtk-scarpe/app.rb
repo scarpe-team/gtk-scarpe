@@ -77,7 +77,7 @@ module Scarpe::GTK
         end
 
         @main_window.child = @canvas
-        put_to_canvas
+        full_calculate_and_draw
         @main_window.show
 
         @post_init_methods.each(&:call)
@@ -90,14 +90,18 @@ module Scarpe::GTK
       @gtk_app.quit
     end
 
-    def put_to_canvas
-      ctx = {
-        top: 0,
-        left: 0,
-        rotate: 0,
+    # Let all drawables figure out their size and placement
+    def full_calculate_and_draw
+      calc_context = {
+        "width" => @width,
+        "height" => @height,
+        "left" => 0,
+        "top" => 0,
       }
+      layout = @document_root.calculate_layout(calc_context)
+
       @canvas.children.each { |child| @canvas.remove child }
-      @document_root.put_to_canvas(@canvas, ctx)
+      @document_root.put_to_canvas(@canvas, layout)
     end
   end
 end

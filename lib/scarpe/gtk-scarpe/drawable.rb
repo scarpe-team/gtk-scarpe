@@ -6,6 +6,7 @@ module Scarpe::GTK
   # what happens in Shoes.
   class Drawable < Shoes::Linkable
     include Shoes::Log
+    include Scarpe::Positioning
 
     class << self
       # Return the corresponding Scarpe::GTK class for a particular Shoes class name
@@ -127,42 +128,24 @@ module Scarpe::GTK
       # TODO: remove properly
     end
 
-    # This returns the requested margin for left/top/right/bottom, but it could be
-    # a float (percentage) or negative number that requires further width-dependent
-    # calculation.
-    def requested_margin
-      return @requested_margin if @requested_margin
-
-      # Get margin default
-      if @margin && @margin.is_a?(Integer)
-        md = margin
-      else
-        md = 0
-      end
-
-      @requested_margin = [@margin_left || md, @margin_top || md, @margin_right || md, @margin_bottom || md]
-      @requested_margin.map! do |item|
-        if item.is_a?(String)
-          if item[-1] != "%"
-            raise "Illegal margin String value: #{item.inspect}!"
-          end
-          item.to_f * 0.01
-        elsif item.is_a?(Integer)
-          item
-        else
-          raise "Illegal margin #{item.class} value: #{item.inspect}!"
-        end
-      end
-      @requested_margin
+    def pos_property(prop)
+      instance_variable_get("@#{prop}")
     end
 
-    # Calculate the position relative to the parent drawable(s) based on the current
-    # properties.
-    def calc_pos_and_size(cursor)
+    # Query GTK+ for the natural size and return it
+    def pos_minimum_size
       _min_size, nat_size = @gtk_obj.preferred_size
-      w, h = nat_size.width, nat_size.height
+      [nat_size.width, nat_size.height]
+    end
 
-      ml, mt, mr, mb = requested_margin
+    def put_to_canvas(canvas, layout)
+      unless @gtk_obj
+        raise "Drawable should either set @gtk_obj or override put_to_canvas!"
+      end
+
+      x = layout["left"] + (@left || 0)
+      y = layout["top"] + (@top || 0)
+      canvas.put @gtk_obj, x, y
     end
   end
 end

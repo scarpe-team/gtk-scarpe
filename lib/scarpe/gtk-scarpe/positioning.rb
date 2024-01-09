@@ -73,7 +73,7 @@ module Scarpe::Positioning
   #
   # @return Hash[String] the Hash of property values
   def pos_properties
-    raise "Implement pos_properties() in your subclass!"
+    raise "Implement pos_properties() in your subclass! #{self.inspect}"
   end
 
   # When a drawable is created in the display service, it receives a hash

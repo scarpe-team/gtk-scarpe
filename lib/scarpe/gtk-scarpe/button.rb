@@ -25,11 +25,5 @@ module Scarpe::GTK
 
       super
     end
-
-    def put_to_canvas(canvas, context)
-      x = context[:left] + (@left || 0)
-      y = context[:top] + (@top || 0)
-      canvas.put @gtk_obj, x, y
-    end
   end
 end

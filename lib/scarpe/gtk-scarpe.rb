@@ -39,6 +39,7 @@ Shoes::DisplayService.set_display_service_class(Scarpe::GTK::DisplayService)
 
 require_relative "errors"
 
+require_relative "gtk-scarpe/positioning"
 require_relative "gtk-scarpe/drawable"
 require_relative "gtk-scarpe/slot"
 require_relative "gtk-scarpe/app"

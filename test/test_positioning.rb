@@ -2,8 +2,6 @@
 
 require "test_helper"
 
-require "scarpe/gtk-scarpe/positioning"
-
 # This is a test Drawable, about as simple as possible, to test Positioning
 class TestPosDrawable
   include Scarpe::Positioning
