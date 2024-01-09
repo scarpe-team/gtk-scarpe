@@ -6,6 +6,8 @@ module Scarpe::GTK
     # The children of this drawable, if it is a slot or can otherwise have children
     attr_reader :children
 
+    alias :pos_children :children
+
     def initialize(properties, parent:)
       @children = []
 

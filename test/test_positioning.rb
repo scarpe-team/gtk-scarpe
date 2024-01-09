@@ -139,6 +139,34 @@ class TestPositioningModule < Minitest::Test
     assert_equal 80, pos["children"][0]["children"][0]["width"]
   end
 
+  def test_simple_neg_float_width_drawable_in_slot
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      stack({ "width" => 100, "height" => "100%" }, children: [
+        drawable(75, 50, props: { "width" => -0.2 })
+      ])
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # Drawable should be 80 wide (100 * 0.8)
+    assert_equal 80, pos["children"][0]["children"][0]["width"]
+  end
+
+  def test_simple_neg_percent_width_drawable_in_slot
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      stack({ "width" => 100, "height" => "100%" }, children: [
+        drawable(75, 50, props: { "width" => "-20%" })
+      ])
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # Drawable should be 80 wide (100 * 0.8)
+    assert_equal 80, pos["children"][0]["children"][0]["width"]
+  end
+
   # TODO: negative int-width drawable
   # TODO: negative float-width drawable
   # TODO: margins

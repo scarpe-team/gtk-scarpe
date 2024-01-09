@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Scarpe::GTK
-  class App < Drawable # App inherits from Drawable to set up linkable IDs and event methods
+  class App < Shoes::Linkable # App inherits from Linkable to set up linkable IDs and event methods
     attr_writer :shoes_linkable_id
     attr_writer :document_root
 
@@ -17,7 +17,10 @@ module Scarpe::GTK
       end
       Scarpe::GTK::App.instance = self
 
-      super(properties, parent: nil)
+      super()
+      properties.each do |k, v|
+        instance_variable_set("@#{k}", v)
+      end
 
       @canvas = Gtk::Fixed.new
       @post_init_methods = []

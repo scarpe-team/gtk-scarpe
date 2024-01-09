@@ -165,12 +165,15 @@ module Scarpe::Positioning
       return req
     when Float
       if req < 0
-        raise "Implement me!"
+        req = 1.0 + req
       end
       return context_size * req
     when String
       if req[-1] == "%"
         r = req.to_f / 100.0
+        if r < 0
+          r = 1.0 + r
+        end
         return context_size * r
       end
       raise "Unexpected size-request object: #{req.inspect}"

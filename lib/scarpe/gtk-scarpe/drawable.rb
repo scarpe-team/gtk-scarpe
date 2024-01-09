@@ -38,6 +38,10 @@ module Scarpe::GTK
     def initialize(properties, parent:)
       log_init("GTK::#{self.class.name.split("::"[-1])}") unless @log
 
+      unless @position_as
+        position_as(self.class.name.split("::")[-1])
+      end
+
       # This shouldn't change after creation
       parent&.add_child(self)
       @parent = parent
@@ -130,6 +134,10 @@ module Scarpe::GTK
 
     def pos_property(prop)
       instance_variable_get("@#{prop}")
+    end
+
+    def pos_children
+      []
     end
 
     # Query GTK+ for the natural size and return it
