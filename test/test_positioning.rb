@@ -38,6 +38,10 @@ class TestPositioningModule < Minitest::Test
     TestPosDrawable.new("Stack", props, children:)
   end
 
+  def flow(props = {}, children: [])
+    TestPosDrawable.new("Flow", props, children:)
+  end
+
   def drawable(native_w, native_h, props: {})
     TestPosDrawable.new("Drawable", props, native_size: [native_w, native_h])
   end
@@ -106,7 +110,7 @@ class TestPositioningModule < Minitest::Test
     assert_equal([{ "top" => 0, "left" => 0, "width" => 60, "height" => 90 }], pos["children"])
   end
 
-  def test_simple_drawable_in_slot
+  def test_simple_drawable_in_stack
     app_size = { "width" => 300, "height" => 450 }
 
     top_flow = doc_root(app_size, children: [
@@ -167,7 +171,40 @@ class TestPositioningModule < Minitest::Test
     assert_equal 80, pos["children"][0]["children"][0]["width"]
   end
 
-  # TODO: negative int-width drawable
-  # TODO: negative float-width drawable
+  def test_two_drawables_in_stack
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      stack({ "width" => "100%", "height" => "100%" }, children: [
+        drawable(75, 50, props: {}),
+        drawable(100, 65, props: {}),
+      ])
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # First drawable should be 75 wide, 50 tall and at 0,0
+    assert_equal({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
+    # Second drawable should be 100 wide, 65 tall and at 0, 50 (just after first drawable)
+    assert_equal({ "width" => 100, "height" => 65, "top" => 50, "left" => 0 }, pos["children"][0]["children"][1])
+  end
+
+  def test_two_drawables_in_flow
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      flow({ "width" => "100%", "height" => "100%" }, children: [
+        drawable(75, 50, props: {}),
+        drawable(100, 65, props: {}),
+      ])
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # First drawable should be 75 wide, 50 tall and at 0,0
+    assert_equal({ "width" => 75, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
+    # Second drawable should be 100 wide, 65 tall and at 0, 50 (just after first drawable)
+    assert_equal({ "width" => 100, "height" => 65, "top" => 0, "left" => 75 }, pos["children"][0]["children"][1])
+  end
+
   # TODO: margins
+  # TODO: flow with an element too wide to fit a row by itself
 end

@@ -127,20 +127,50 @@ module Scarpe::Positioning
     end
 
     out_ctx = {
-      "top" => t || 0,
-      "left" => l || 0,
+      "top" => t || ctx["top"] || 0,
+      "left" => l || ctx["left"] || 0,
       "width" => w,
       "height" => h,
     }
 
-    children = nil
-    if @position_as == "Flow" || @position_as == "Stack"
-      children = pos_children
-      if children.size > 1
-        raise "Implement nontrivial layout!"
+    if @position_as == "Stack"
+      pc = pos_children
+      child_layouts = []
+
+      next_top = out_ctx["top"]
+      pc.each do |child|
+        child_layout = child.calculate_layout(out_ctx.merge("top" => next_top))
+        child_layouts << child_layout
+        next_top = child_layout["top"] + child_layout["height"]
       end
+
+      out_ctx["children"] = child_layouts
+    elsif @position_as == "Flow"
+      pc = pos_children
+      child_layouts = []
+
+      next_top = out_ctx["top"]
+      next_left = out_ctx["left"]
+      far_left = out_ctx["left"]
+      row_height = 0
+
+      pc.each do |child|
+        child_layout = child.calculate_layout(out_ctx.merge("top" => next_top, "left" => next_left))
+        if child_layout["left"] + child_layout["width"] > out_ctx["width"] && next_left != far_left
+          # Stack vertically - no space left to the right
+          next_left = far_left
+          child_layout["left"] = far_left
+          next_top = next_top + row_height
+        else
+          # Stack horizontally
+          row_height = child_layout["height"] if child_layout["height"] > row_height
+          next_left = child_layout["left"] + child_layout["width"]
+        end
+        child_layouts << child_layout
+      end
+
       # out_ctx has the slot's top, left, width and height
-      out_ctx["children"] = children.map { |child| child.calculate_layout(out_ctx) }
+      out_ctx["children"] = child_layouts
     end
 
     if w && h
