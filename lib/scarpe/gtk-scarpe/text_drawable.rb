@@ -54,6 +54,9 @@ module Scarpe::GTK
       raise "Implement me! Color conversion: #{c.inspect}"
     end
 
+    # There will be more of these. Here is the documentation
+    # for attributes on Pango spans:
+    # https://docs.gtk.org/Pango/pango_markup.html
     def self.shoes_properties_to_pango_attributes(p)
       out = {}
       p.each do |prop, val|
