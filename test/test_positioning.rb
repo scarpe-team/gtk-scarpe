@@ -66,7 +66,7 @@ class TestPositioningModule < Minitest::Test
     assert_equal({ "top" => 0, "left" => 0, "width" => 300, "height" => 450, "children" => [] }, pos)
   end
 
-  def test_simple_int_drawable_in_doc_root
+  def test_simple_native_size_drawable_in_doc_root
     app_size = { "width" => 300, "height" => 450 }
 
     # This is like a 100x50 button inside a Shoes.app
@@ -74,5 +74,24 @@ class TestPositioningModule < Minitest::Test
     pos = top_flow.calculate_layout(app_size)
 
     assert_equal([{ "top" => 0, "left" => 0, "width" => 100, "height" => 50 }], pos["children"])
+  end
+
+  def test_simple_int_width_drawable_in_doc_root
+    app_size = { "width" => 300, "height" => 450 }
+
+    # This is like a 100x50 button inside a Shoes.app
+    top_flow = doc_root(app_size, children: [drawable(100, 50, props: { "width" => 110 })])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_equal([{ "top" => 0, "left" => 0, "width" => 110, "height" => 50 }], pos["children"])
+  end
+
+  def test_simple_pct_width_drawable_in_doc_root
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [drawable(100, 50, props: { "width" => "10%", "height" => "10%" })])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_equal([{ "top" => 0, "left" => 0, "width" => 30, "height" => 45 }], pos["children"])
   end
 end
