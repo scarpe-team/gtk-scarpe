@@ -158,9 +158,11 @@ module Scarpe::Positioning
         child_layout = child.calculate_layout(out_ctx.merge("top" => next_top, "left" => next_left))
         if child_layout["left"] + child_layout["width"] > out_ctx["width"] && next_left != far_left
           # Stack vertically - no space left to the right
-          next_left = far_left
           child_layout["left"] = far_left
+          child_layout["top"] = next_top + row_height
           next_top = next_top + row_height
+          row_height = child_layout["height"]
+          next_left = child_layout["left"] + child_layout["width"]
         else
           # Stack horizontally
           row_height = child_layout["height"] if child_layout["height"] > row_height

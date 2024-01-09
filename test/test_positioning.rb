@@ -205,6 +205,60 @@ class TestPositioningModule < Minitest::Test
     assert_equal({ "width" => 100, "height" => 65, "top" => 0, "left" => 75 }, pos["children"][0]["children"][1])
   end
 
+  def test_flow_wrapping_drawables
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      # First row
+      drawable(100, 50),
+      drawable(150, 75),
+
+      # Second row
+      drawable(100, 90),
+      drawable(175, 50),
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # First row
+    assert_equal({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
+    assert_equal({ "width" => 150, "height" => 75, "top" => 0, "left" => 100 }, pos["children"][1])
+    # Second row
+    assert_equal({ "width" => 100, "height" => 90, "top" => 75, "left" => 0 }, pos["children"][2])
+    assert_equal({ "width" => 175, "height" => 50, "top" => 75, "left" => 100 }, pos["children"][3])
+  end
+
+  def test_flow_wrapping_drawables_with_shorter_second_row_and_very_wide_third_row
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [
+      # First row
+      drawable(100, 50),
+      drawable(150, 90),
+
+      # Second row
+      drawable(100, 40),
+      drawable(175, 50),
+
+      # Third row
+      drawable(350, 50),
+
+      # Fourth row
+      drawable(250, 50),
+    ])
+    pos = top_flow.calculate_layout(app_size)
+
+    # First row
+    assert_equal({ "width" => 100, "height" => 50, "top" => 0, "left" => 0 }, pos["children"][0])
+    assert_equal({ "width" => 150, "height" => 90, "top" => 0, "left" => 100 }, pos["children"][1])
+    # Second row
+    assert_equal({ "width" => 100, "height" => 40, "top" => 90, "left" => 0 }, pos["children"][2])
+    assert_equal({ "width" => 175, "height" => 50, "top" => 90, "left" => 100 }, pos["children"][3])
+    # Third row
+    assert_equal({ "width" => 350, "height" => 50, "top" => 140, "left" => 0 }, pos["children"][4])
+    # Fourth row
+    assert_equal({ "width" => 250, "height" => 50, "top" => 190, "left" => 0 }, pos["children"][5])
+  end
+
   # TODO: margins
   # TODO: flow with an element too wide to fit a row by itself
 end
