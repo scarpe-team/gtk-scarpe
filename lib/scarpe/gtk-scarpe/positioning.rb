@@ -186,6 +186,13 @@ module Scarpe::Positioning
       pc.each do |child|
         child_layout = child.calculate_layout(out_ctx.merge("top" => next_top))
         child_layouts << child_layout
+        if child_layout["display"] == "out"
+          # Don't expand the Stack to hold this or move other drawables around for it.
+          next
+        end
+        min_width = child_layout["width"] if min_width < child_layout["width"]
+        bottom = child_layout["top"] + child_layout["height"]
+        min_height = bottom if bottom > min_height
         next_top = child_layout["top"] + child_layout["height"]
       end
 
@@ -201,6 +208,11 @@ module Scarpe::Positioning
 
       pc.each do |child|
         child_layout = child.calculate_layout(out_ctx.merge("top" => next_top, "left" => next_left))
+        if child_layout["display"] == "out"
+          # Don't expand the Flow to hold this or move other drawables around for it.
+          child_layouts << child_layout
+          next
+        end
         if child_layout["left"] + child_layout["width"] > max_width && next_left != far_left
           # Stack vertically - no space left to the right
           child_layout["left"] = far_left

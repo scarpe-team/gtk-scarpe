@@ -283,6 +283,34 @@ class TestPositioningModule < Minitest::Test
     assert_has_properties({ "width" => 250, "height" => 90 }, pos["children"][0])
   end
 
+  def test_stack_with_absolutely_positioned_element_inside
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children:[stack(children: [
+      drawable(200, 100, props: { "top" => 30 }),
+      drawable(150, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "width" => 150, "height" => 90 }, pos["children"][0])
+    assert_has_properties({ "width" => 200, "height" => 100, "top" => 30, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 150, "height" => 90, "top" => 0, "left" => 0 }, pos["children"][0]["children"][1])
+  end
+
+  def test_flow_with_absolutely_positioned_element_inside
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children:[flow(children: [
+      drawable(200, 100, props: { "top" => 30 }),
+      drawable(150, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "width" => 150, "height" => 90 }, pos["children"][0])
+    assert_has_properties({ "width" => 200, "height" => 100, "top" => 30, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 150, "height" => 90, "top" => 0, "left" => 0 }, pos["children"][0]["children"][1])
+  end
+
   # TODO: make sure flows wrap properly even if they're smaller than the slot width (e.g. 30%)
   # TODO: margins
 end
