@@ -259,6 +259,30 @@ class TestPositioningModule < Minitest::Test
     assert_has_properties({ "width" => 250, "height" => 50, "top" => 190, "left" => 0 }, pos["children"][5])
   end
 
+  def test_expanding_stack_from_inside
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [stack(children: [
+      drawable(100, 50),
+      drawable(150, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "width" => 150, "height" => 140 }, pos["children"][0])
+  end
+
+  def test_expanding_flow_from_inside
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [flow(children: [
+      drawable(100, 50),
+      drawable(150, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "width" => 250, "height" => 90 }, pos["children"][0])
+  end
+
+  # TODO: make sure flows wrap properly even if they're smaller than the slot width (e.g. 30%)
   # TODO: margins
-  # TODO: flow with an element too wide to fit a row by itself
 end

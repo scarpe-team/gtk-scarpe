@@ -39,7 +39,7 @@ module Scarpe::GTK
       log_init("GTK::#{self.class.name.split("::"[-1])}") unless @log
 
       unless @position_as
-        position_as(self.class.name.split("::")[-1])
+        position_as("Drawable")
       end
 
       # This shouldn't change after creation

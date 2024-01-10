@@ -11,12 +11,13 @@ module Scarpe::GTK
     def initialize(properties, parent:)
       @children = []
 
+      unless @position_as
+        position_as(self.class.name.split("::")[-1])
+      end
+
       super
 
-      # Children can set @gtk_obj == true if they don't want the Slot to create one
-      unless @gtk_obj
-        @gtk_obj = Gtk::Fixed.new
-      end
+      # Slots don't currently need or use GTK+ objects - they're just for positioning
     end
 
     # Do not call directly, use set_parent
@@ -53,5 +54,10 @@ module Scarpe::GTK
 
   # left: 0, top: 0
   class DocumentRoot < Slot
+    def initialize(properties, parent:)
+      position_as("Flow")
+      @gtk_obj = Gtk::Fixed.new
+      super
+    end
   end
 end

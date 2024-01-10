@@ -121,7 +121,7 @@ module Scarpe::Positioning
       "left" => l || ctx["left"] || 0,
       "width" => w,
       "height" => h,
-      #"display" => (t || l) ? "out" : "in", # Does this display inline, or is it out-of-line?
+      "display" => (t || l) ? "out" : "in", # Does this display inline, or is it out-of-line?
     }
 
     # Commonly, top and left may not be set here and the parent slot will need to do it.
@@ -144,6 +144,7 @@ module Scarpe::Positioning
       raise "Must declare what element type to position as! #{self.inspect}"
     end
 
+    # Slots are more complicated - do Drawables separately
     if @position_as == "Drawable"
       return calculate_drawable_layout(ctx)
     end
@@ -160,19 +161,22 @@ module Scarpe::Positioning
     t = pt && req_to_size(pt || 0, ctx["height"])
     l = pl && req_to_size(pl || 0, ctx["width"])
 
-    # Failing that, if it's a Drawable with a native height or width, use that
-    if @position_as == "Drawable" && (!w || !h)
-      min_w, min_h = pos_minimum_size
-      w ||= min_w
-      h ||= min_h
-    end
-
     out_ctx = {
       "top" => t || ctx["top"] || 0,
       "left" => l || ctx["left"] || 0,
       "width" => w,
       "height" => h,
     }
+
+    max_width = ctx["width"]
+    max_height = ctx["height"]
+    max_width = w if w && w < max_width
+    max_height = h if h && h < max_height
+
+    min_width = 0
+    min_height = 0
+    min_width = w if w && w > min_width
+    min_height = h if h && h > min_height
 
     if @position_as == "Stack"
       pc = pos_children
@@ -197,7 +201,7 @@ module Scarpe::Positioning
 
       pc.each do |child|
         child_layout = child.calculate_layout(out_ctx.merge("top" => next_top, "left" => next_left))
-        if child_layout["left"] + child_layout["width"] > out_ctx["width"] && next_left != far_left
+        if child_layout["left"] + child_layout["width"] > max_width && next_left != far_left
           # Stack vertically - no space left to the right
           child_layout["left"] = far_left
           child_layout["top"] = next_top + row_height
@@ -209,18 +213,19 @@ module Scarpe::Positioning
           row_height = child_layout["height"] if child_layout["height"] > row_height
           next_left = child_layout["left"] + child_layout["width"]
         end
+        min_width = next_left if min_width < next_left
+        bottom = child_layout["top"] + child_layout["height"]
+        min_height = bottom if min_height < bottom
         child_layouts << child_layout
       end
 
-      # out_ctx has the slot's top, left, width and height
       out_ctx["children"] = child_layouts
     end
 
-    if w && h
-      return(out_ctx)
-    end
+    out_ctx["width"] ||= min_width
+    out_ctx["height"] ||= min_height
 
-    raise "Implement me! #{self.inspect}"
+    return out_ctx
   end
 
   private
