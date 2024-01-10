@@ -171,6 +171,24 @@ class TestPositioningModule < Minitest::Test
     assert_equal 80, pos["children"][0]["children"][0]["width"]
   end
 
+  def test_simple_drawable_with_left_specified_in_doc_root
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [drawable(10, 30, props: { "left" => 30, "width" => "10%", "height" => "10%" })])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "top" => 0, "left" => 30, "width" => 30, "height" => 45 }, pos["children"][0])
+  end
+
+  def test_simple_drawable_with_left_pct_specified_in_doc_root
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children: [drawable(10, 30, props: { "left" => "10%", "width" => "10%", "height" => "10%" })])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "top" => 0, "left" => 30, "width" => 30, "height" => 45 }, pos["children"][0])
+  end
+
   def test_two_drawables_in_stack
     app_size = { "width" => 300, "height" => 450 }
 
