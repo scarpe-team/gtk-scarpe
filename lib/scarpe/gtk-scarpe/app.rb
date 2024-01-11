@@ -104,7 +104,11 @@ module Scarpe::GTK
       layout = @document_root.calculate_layout(calc_context)
 
       @canvas.children.each { |child| @canvas.remove child }
-      @document_root.put_to_canvas(@canvas, layout)
+      offset = {
+        "left" => 0,
+        "top" => 0,
+      }
+      @document_root.put_to_canvas(@canvas, offset, layout)
     end
   end
 end

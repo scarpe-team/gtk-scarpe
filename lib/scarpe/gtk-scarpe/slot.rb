@@ -36,12 +36,12 @@ module Scarpe::GTK
       #needs_update!
     end
 
-    def put_to_canvas(canvas, context)
-      ctx = context.dup
-      ctx[:left] += @left if @left
-      ctx[:top] += @top if @top
-      @children.each do |child|
-        child.put_to_canvas canvas, ctx
+    def put_to_canvas(canvas, offset, layout)
+      offs = offset.dup
+      offs["left"] += layout["left"]
+      offs["top"] += layout["top"]
+      @children.each.with_index do |child, idx|
+        child.put_to_canvas canvas, offs, layout["children"][idx]
       end
     end
   end

@@ -11,6 +11,10 @@ class TestPosDrawable
     @children = children
     @native_size = native_size
 
+    if @props.any? { |k, _v| k.is_a?(Symbol) }
+      raise("BAD TEST DATA: #{@props.inspect}")
+    end
+
     position_as(d_type)
   end
 
@@ -301,6 +305,20 @@ class TestPositioningModule < Minitest::Test
     assert_has_properties({ "width" => 250, "height" => 90 }, pos["children"][0])
   end
 
+  def test_stack_with_left_property
+    app_size = { "width" => 300, "height" => 450 }
+
+    top_flow = doc_root(app_size, children:[stack({ "left" => "10%" }, children: [
+      drawable(200, 100, props: { "top" => 30 }),
+      drawable(150, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "left" => 30.0, "width" => 150, "height" => 90 }, pos["children"][0])
+    assert_has_properties({ "width" => 200, "height" => 100, "top" => 30, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 150, "height" => 90, "top" => 0, "left" => 0 }, pos["children"][0]["children"][1])
+  end
+
   def test_stack_with_absolutely_positioned_element_inside
     app_size = { "width" => 300, "height" => 450 }
 
@@ -327,6 +345,21 @@ class TestPositioningModule < Minitest::Test
     assert_has_properties({ "width" => 150, "height" => 90 }, pos["children"][0])
     assert_has_properties({ "width" => 200, "height" => 100, "top" => 30, "left" => 0 }, pos["children"][0]["children"][0])
     assert_has_properties({ "width" => 150, "height" => 90, "top" => 0, "left" => 0 }, pos["children"][0]["children"][1])
+  end
+
+  def test_narrower_stack_positioning
+    app_size = { "width" => 300, "height" => 450 }
+
+    # Test a stack with left coord 30, width 150
+    top_flow = doc_root(app_size, children:[stack({ "left" => "10%", "width" => "50%" }, children: [
+      drawable(100, 100),
+      drawable(125, 90),
+    ])])
+    pos = top_flow.calculate_layout(app_size)
+
+    assert_has_properties({ "left" => 30, "width" => 150, "height" => 190 }, pos["children"][0])
+    assert_has_properties({ "width" => 100, "height" => 100, "top" => 0, "left" => 0 }, pos["children"][0]["children"][0])
+    assert_has_properties({ "width" => 125, "height" => 90, "top" => 100, "left" => 0 }, pos["children"][0]["children"][1])
   end
 
   # TODO: make sure flows wrap properly even if they're smaller than the slot width (e.g. 30%)

@@ -146,14 +146,12 @@ module Scarpe::GTK
       [nat_size.width, nat_size.height]
     end
 
-    def put_to_canvas(canvas, layout)
+    def put_to_canvas(canvas, offset, layout)
       unless @gtk_obj
         raise "Drawable should either set @gtk_obj or override put_to_canvas!"
       end
 
-      x = layout["left"] + (@left || 0)
-      y = layout["top"] + (@top || 0)
-      canvas.put @gtk_obj, x, y
+      canvas.put @gtk_obj, layout["left"] + offset["left"], layout["top"] + offset["top"]
     end
   end
 end
