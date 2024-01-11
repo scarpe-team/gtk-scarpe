@@ -151,6 +151,7 @@ module Scarpe::GTK
         raise "Drawable should either set @gtk_obj or override put_to_canvas!"
       end
 
+      @gtk_obj.set_size_request layout["width"], layout["height"]
       canvas.put @gtk_obj, layout["left"] + offset["left"], layout["top"] + offset["top"]
     end
   end
