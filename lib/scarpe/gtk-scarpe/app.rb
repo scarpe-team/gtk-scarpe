@@ -57,7 +57,7 @@ module Scarpe::GTK
     end
 
     def run
-      @gtk_app = Gtk::Application.new("org.gtk.example", :flags_none)
+      @gtk_app = Gtk::Application.new("org.scarperb.example", :flags_none)
 
       @gtk_app.signal_connect "startup" do |app|
         # Load CSS
