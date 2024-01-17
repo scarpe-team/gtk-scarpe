@@ -154,5 +154,9 @@ module Scarpe::GTK
       @gtk_obj.set_size_request layout["width"], layout["height"]
       canvas.put @gtk_obj, layout["left"] + offset["left"], layout["top"] + offset["top"]
     end
+
+    def to_bool(v)
+      v ? true : false
+    end
   end
 end

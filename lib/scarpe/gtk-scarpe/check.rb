@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+module Scarpe::GTK
+  class Check < Drawable
+    attr_reader :gtk_obj
+
+    def initialize(properties, parent:)
+      super
+
+      @gtk_obj = Gtk::CheckButton.new
+      @gtk_obj.active = true if @checked
+
+      # Send GTK+ click to Shoes
+      @gtk_obj.signal_connect "toggled" do
+        new_val = to_bool(@gtk_obj.active?)
+        if new_val != to_bool(@checked)
+          send_self_event(event_name: "click")
+        end
+      end
+
+      # TODO: hover
+    end
+
+    def properties_changed(changes)
+      if changes.key?("checked")
+        new_val = to_bool(changes.delete("checked"))
+        if to_bool(@gtk_obj.active?) != new_val
+          @gtk_obj.active = new_val
+        end
+      end
+
+      super
+    end
+  end
+end
