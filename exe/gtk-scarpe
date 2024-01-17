@@ -78,8 +78,15 @@ when "-v"
   puts "Scarpe-Components #{Scarpe::Components::VERSION}"
   puts "Lacci #{Lacci::VERSION}"
 when "run"
+  sspec_file = File.expand_path(File.dirname(verb_target) + "/sspec.json") # If this is an .sspec test run
+
   # Run the Scarpe app file
   Shoes.run_app verb_target
+
+  if verb_target.end_with?(".sspec")
+    STDERR.puts "Test results:"
+    STDERR.puts JSON.pretty_generate(JSON.load_file sspec_file)
+  end
 when "env"
   print_env
 else
