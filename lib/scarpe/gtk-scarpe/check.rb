@@ -12,8 +12,8 @@ module Scarpe::GTK
 
       # Send GTK+ click to Shoes
       @gtk_obj.signal_connect "toggled" do
-        new_val = to_bool(@gtk_obj.active?)
-        if new_val != to_bool(@checked)
+        new_val = @gtk_obj.active?
+        if new_val != @checked
           send_self_event(event_name: "click")
         end
       end
@@ -23,8 +23,8 @@ module Scarpe::GTK
 
     def properties_changed(changes)
       if changes.key?("checked")
-        new_val = to_bool(changes.delete("checked"))
-        if to_bool(@gtk_obj.active?) != new_val
+        new_val = changes.delete("checked")
+        if @gtk_obj.active? != new_val
           @gtk_obj.active = new_val
         end
       end
