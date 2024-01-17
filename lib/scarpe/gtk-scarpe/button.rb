@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Scarpe::GTK
-  class Button < Drawable # App inherits from Drawable to set up linkable IDs and event methods
-    attr_reader :gtk_obj # Needed for triggering clicks in tests
+  class Button < Drawable
+    attr_reader :gtk_obj
 
     def initialize(properties, parent:)
       super
