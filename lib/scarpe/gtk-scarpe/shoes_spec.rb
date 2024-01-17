@@ -36,7 +36,6 @@ end
 
 class Scarpe::GTK::ShoesSpecProxy
   attr_reader :obj
-  attr_reader :gtk_obj
   attr_reader :linkable_id
   attr_reader :display
 
@@ -49,9 +48,6 @@ class Scarpe::GTK::ShoesSpecProxy
 
     unless @display
       raise "Can't find display widget for #{obj.inspect}!"
-    end
-    if @display.respond_to?(:gtk_obj)
-      @gtk_obj = @display.gtk_obj
     end
   end
 
@@ -67,13 +63,9 @@ class Scarpe::GTK::ShoesSpecProxy
   end
 
   def trigger(event_name, *args)
-    unless @gtk_obj
-      raise "Trying to trigger #{event_name.inspect} on #{@obj.class} but can't find GTK+ object!"
-    end
-
     case event_name
-    when :click
-      @gtk_obj.signal_emit("clicked")
+    when :click, :hover, :leave
+      @display.trigger(event_name.to_s)
     else
       raise "Implement me: trigger #{event_name.inspect}!"
     end

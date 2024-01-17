@@ -30,10 +30,21 @@ module Scarpe::GTK
     def properties_changed(changes)
       text = changes.delete("text")
       if text
-        @gtk.obj.text = text
+        @gtk_obj.label = text
       end
 
       super
+    end
+
+    def trigger(event, x = nil, y = nil)
+      case event
+      when "click", "hover", "leave"
+        send_self_event(event_name: event)
+      when "motion"
+        send_self_event(x, y, event_name: event)
+      else
+        raise "Implement me! Trigger #{event.inspect}"
+      end
     end
   end
 end
