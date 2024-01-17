@@ -2,8 +2,6 @@
 
 module Scarpe::GTK
   class Button < Drawable
-    attr_reader :gtk_obj
-
     def initialize(properties, parent:)
       super
 
