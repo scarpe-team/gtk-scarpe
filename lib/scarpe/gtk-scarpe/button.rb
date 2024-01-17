@@ -12,7 +12,19 @@ module Scarpe::GTK
         send_self_event(event_name: "click")
       end
 
-      # TODO: hover
+      # TODO: figure out which of these events, if any, are set and only include
+      # a controller if needed?
+      @hover_controller = Gtk::EventControllerMotion.new
+      @gtk_obj.add_controller @hover_controller
+      @hover_controller.signal_connect "enter" do
+        send_self_event(event_name: "hover")
+      end
+      @hover_controller.signal_connect "leave" do
+        send_self_event(event_name: "leave")
+      end
+      @hover_controller.signal_connect "motion" do |_controller, x, y|
+        send_self_event(x, y, event_name: "motion")
+      end
     end
 
     def properties_changed(changes)
