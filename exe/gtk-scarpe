@@ -83,7 +83,7 @@ when "run"
   # Run the Scarpe app file
   Shoes.run_app verb_target
 
-  if verb_target.end_with?(".sspec")
+  if verb_target.end_with?(".sspec") && !ENV["SHOES_MINITEST_EXPORT_FILE"]
     STDERR.puts "Test results:"
     STDERR.puts JSON.pretty_generate(JSON.load_file sspec_file)
   end
