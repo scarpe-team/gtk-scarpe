@@ -7,6 +7,8 @@ module Scarpe::GTK
 
       @gtk_obj = Gtk::Label.new
       @gtk_obj.set_markup child_markup
+
+      add_motion_events
     end
 
     def child_markup

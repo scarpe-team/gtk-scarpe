@@ -16,7 +16,7 @@ module Scarpe::GTK
         end
       end
 
-      # TODO: hover
+      add_motion_events
     end
 
     def properties_changed(changes)

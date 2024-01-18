@@ -76,6 +76,33 @@ module Scarpe::GTK
       end
     end
 
+    def add_motion_events
+      # TODO: figure out which of these events, if any, are set and only include
+      # a controller if needed?
+      @motion_controller = Gtk::EventControllerMotion.new
+      @gtk_obj.add_controller @motion_controller
+      @motion_controller.signal_connect "enter" do
+        send_self_event(event_name: "hover")
+      end
+      @motion_controller.signal_connect "leave" do
+        send_self_event(event_name: "leave")
+      end
+      @motion_controller.signal_connect "motion" do |_controller, x, y|
+        send_self_event(x, y, event_name: "motion")
+      end
+    end
+
+    def trigger(event, x = nil, y = nil)
+      case event
+      when "hover", "leave"
+        send_self_event(event_name: event)
+      when "motion"
+        send_self_event(x, y, event_name: event)
+      else
+        raise "Implement me! Trigger #{event.inspect}"
+      end
+    end
+
     def shoes_styles
       p = {}
       @shoes_style_names.each do |prop_name|

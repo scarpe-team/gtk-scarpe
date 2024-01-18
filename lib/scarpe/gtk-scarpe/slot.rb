@@ -17,6 +17,9 @@ module Scarpe::GTK
 
       super
 
+      # TODO: add_motion_events or equivalent
+      # TODO: @background_color
+
       # Slots don't currently need or use GTK+ objects - they're just for positioning
     end
 
