@@ -65,7 +65,7 @@ class Scarpe::GTK::ShoesSpecProxy
   def trigger(event_name, *args)
     case event_name
     when :click, :hover, :leave, :motion
-      @display.trigger(event_name.to_s)
+      @display.trigger(event_name.to_s, *args)
     else
       raise "Implement me: trigger #{event_name.inspect}!"
     end
