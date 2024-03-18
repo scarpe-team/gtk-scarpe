@@ -2,9 +2,9 @@
 
 Gtk-Scarpe is a specific Scarpe implementation based on GTK4. Scarpe is a reimplementation of Shoes, a Ruby desktop UI library originally written by [\_why the lucky stiff](https://en.wikipedia.org/wiki/Why_the_lucky_stiff).
 
-Gtk-scarpe uses Lacci, the standard Scarpe DSL, and Scarpe-Components. It's a non-HTML-based local display.
+Gtk-Scarpe uses Lacci, the standard Scarpe DSL, and Scarpe-Components. It's a non-HTML-based local display.
 
-Soon we hope to support Shoes-Spec, the common Shoes testing framework and test suite.
+Gtk-Scarpe support Shoes-Spec, though only the set of drawables and features currently supported by Gtk-Scarpe.
 
 ## Installation
 
