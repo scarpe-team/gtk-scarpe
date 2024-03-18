@@ -10,6 +10,14 @@ require "lacci/scarpe_core"
 require "gtk4"
 require "gdk4"
 
+module GLib
+  module_function
+  def exit_application(exception, status)
+    raise exception if exception.class.name == "SystemExit"
+    super(exception, status)
+  end
+end
+
 require "scarpe/components/errors"
 require "scarpe/components/modular_logger"
 # Set up hierarchical logging using the SCARPE_LOG_CONFIG var for configuration
