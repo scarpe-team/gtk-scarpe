@@ -43,7 +43,7 @@ add_env_categories("Scarpe::GTK" => [
   #env_or_default("SCARPE_HTML_RENDERER", "calzini"),
 ])
 
-verb = "run"
+verb = "run" # default verb
 verb_target = nil
 
 case ARGV[0]
@@ -79,11 +79,13 @@ when "-v"
   puts "Lacci #{Lacci::VERSION}"
 when "run"
   sspec_file = File.expand_path(File.dirname(verb_target) + "/sspec.json") # If this is an .sspec test run
+  # Check whether to print results before we auto-set the env var
+  print_results = verb_target.end_with?(".sspec") && !ENV["SHOES_MINITEST_EXPORT_FILE"]
 
   # Run the Scarpe app file
   Shoes.run_app verb_target
 
-  if verb_target.end_with?(".sspec") && !ENV["SHOES_MINITEST_EXPORT_FILE"]
+  if print_results
     STDERR.puts "Test results:"
     STDERR.puts JSON.pretty_generate(JSON.load_file sspec_file)
   end
