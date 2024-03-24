@@ -86,8 +86,10 @@ when "run"
   Shoes.run_app verb_target
 
   if print_results
+    require "scarpe/components/minitest_result"
     STDERR.puts "Test results:"
-    STDERR.puts JSON.pretty_generate(JSON.load_file sspec_file)
+    res = Scarpe::Components::MinitestResult.new(sspec_file)
+    STDERR.puts res.console_summary
   end
 when "env"
   print_env
