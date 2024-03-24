@@ -30,6 +30,18 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Writing Specs
+
+Shoes-Spec is the preferred way to write integration tests. To run a Shoes-Spec test, you can use exe/gtk-scarpe. If your filename ends in .sspec and you don't set the environment var SHOES_MINITEST_EXPORT_FILE, Gtk-Scarpe will print your test results to the console:
+
+~~~
+noah@Noahs-MBP-3 gtk-scarpe % ./exe/gtk-scarpe --dev ../shoes-spec/cases/drawables/button/basic_click.sspec
+Test results:
+Success!
+~~~
+
+If there's an exception, skip or failure you should see console results printed as well.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/scarpe-team/gtk-scarpe. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/scarpe-team/gtk-scarpe/blob/main/CODE_OF_CONDUCT.md).
