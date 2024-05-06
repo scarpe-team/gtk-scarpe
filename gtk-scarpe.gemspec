@@ -36,8 +36,8 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
 
   spec.add_dependency "gtk4"
-  spec.add_dependency "scarpe-components", "0.3.0"
-  spec.add_dependency "lacci", "0.3.0"
+  spec.add_dependency "scarpe-components", "~>0.4.0"
+  spec.add_dependency "lacci", "~>0.4.0"
   spec.add_dependency "logging"
 
   # For more information and examples about making a new gem, check out our

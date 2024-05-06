@@ -1,22 +1,22 @@
 PATH
   remote: ../scarpe/lacci
   specs:
-    lacci (0.3.0)
-      scarpe-components
+    lacci (0.4.0)
+      scarpe-components (~> 0.4.0)
 
 PATH
   remote: ../scarpe/scarpe-components
   specs:
-    scarpe-components (0.3.0)
+    scarpe-components (0.4.0)
 
 PATH
   remote: .
   specs:
     gtk-scarpe (0.1.0)
       gtk4
-      lacci (= 0.3.0)
+      lacci (~> 0.4.0)
       logging
-      scarpe-components (= 0.3.0)
+      scarpe-components (~> 0.4.0)
 
 GEM
   remote: https://rubygems.org/
